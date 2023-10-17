@@ -87,10 +87,16 @@ class Pila:
                 return None
         else:
             if not self.vacia():
-                return self.item.pop()
+                 return self.item.pop()
         
     def vacia(self):
         return len(self.item) == 0
+    
+    def __iter__(self):
+        return iter(self.item)
+    
+    def __reversed__(self):
+        return reversed(self.item)
     
 # Cola
 class Cola:
@@ -101,7 +107,7 @@ class Cola:
         self.item.append(items)
         
     def eliminar(self):
-        if not self.vacia:
+        if not self.vacia():
             return self.item.pop(0)
     
     def vacia(self):
