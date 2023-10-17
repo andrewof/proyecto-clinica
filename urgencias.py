@@ -155,6 +155,7 @@ class ClinicaUrgencias:
                     elif nuevoEstado == "Atendido":
                         self.pacientesEnProceso.eliminar(existePaciente)
                         self.pacientesAtendidos.append(existePaciente)
+                       
                         
                     print("\nEl estado del paciente ha sido actualizado.")
                     break
