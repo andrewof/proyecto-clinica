@@ -90,7 +90,7 @@ class ClinicaUrgencias:
                 else:
                     print("\n-- Pacientes en proceso de atención --")
                     print(f"{'Nombre':<20}{'Apellido':<20}{'Edad':<20}{'Identificación':<20}{'Estado':<20}")
-                    for paciente in reversed(self.pacientesEnProceso):
+                    for paciente in self.pacientesEnProceso:
                         print(f"{paciente.nombre:<20}{paciente.apellido:<20}{str(paciente.edad):<20}{paciente.identificacion:<20}{paciente.estado:<20}")
                 break
             elif opcion == 3:

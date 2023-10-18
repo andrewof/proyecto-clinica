@@ -76,7 +76,7 @@ class Pila:
         self.item = []
         
     def agregar(self, items):
-        self.item.append(items)
+        self.item.insert(0, items)
         
     def eliminar(self, items=None):
         if items is not None:
@@ -95,8 +95,8 @@ class Pila:
     def __iter__(self):
         return iter(self.item)
     
-    def __reversed__(self):
-        return reversed(self.item)
+    # def __reversed__(self):
+    #     return reversed(self.item)
     
 # Cola
 class Cola:
