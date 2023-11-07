@@ -148,10 +148,12 @@ class Admisiones:
         if paciente:
             gradoUrgencia = self.gradoUrgencia(paciente)
             if gradoUrgencia == "De alta con Tratamiento":
+                codigoMedicamento = str(codigoMedicamento)
                 medicamento = self.buscarMedicamento(codigoMedicamento)
                 if medicamento:
-                    paciente.establecerMedicamento(medicamento)
-                    print(f"\nMedicamento {medicamento['nombre']} asignado con éxito al paciente {paciente.nombre} {paciente.apellido}")
+                    nuevoMedicamneto = Medicamento(codigoMedicamento, medicamento['nombre'], 1)
+                    paciente.establecerMedicamento(nuevoMedicamneto)
+                    print(f"\nMedicamento {nuevoMedicamneto.nombre} asignado con éxito al paciente {paciente.nombre} {paciente.apellido}")
                     medicamento['existencia'] -= 1
                 else:
                     print("\nMedicamento no encontrado.")
@@ -196,7 +198,7 @@ class Admisiones:
             paciente = nodoActual.dato
             servicios = ", ".join(paciente.servicios)
             gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
+            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
             nodoActual = nodoActual.siguiente
             
             
@@ -205,14 +207,14 @@ class Admisiones:
         for paciente in self.pacientesEnProceso:
             servicios = ", ".join(paciente.servicios)
             gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
+            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
             
     def mostrarPacientesAtendidos(self):
         print("\nPacientes atendidos")
         for paciente in self.pacientesAtendidos:
             servicios = ", ".join(paciente.servicios)
             gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
+            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
             if gradoUrgencia == "De alta con Tratamiento":
                 medicamento = ", ".join([medicamento.nombre for medicamento in paciente.medicamentos])
                 print(f"Medicamento asignados {medicamento}")

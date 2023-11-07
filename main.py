@@ -1,4 +1,4 @@
-from admisiones import Admisiones
+from urgencias import Admisiones
 
 # Inicia el programa        
 if __name__ == "__main__":
