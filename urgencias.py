@@ -191,35 +191,41 @@ class Admisiones:
         else:
             return "No se puede determinar el grado de la urgencia"
     
+        # Método para mostrar los datos de los pacientes en tablas
+    def tabla(self, pacientes):
+        if not pacientes:
+            print("\nNo hay pacientes actualmente")
+            return
+        
+        anchoColumna = 16
+        
+        encabezado = f"{'Nombre':^{anchoColumna}} {'Apellido':^{anchoColumna}} {'Edad':^{anchoColumna}} {'Identificación':^{anchoColumna}} {'EPS':^{anchoColumna}} {'Estado':^{anchoColumna}} {'Servicios':^{anchoColumna}} {'Grado urgencia':^{anchoColumna}}"
+        print(encabezado)
+        print("-"*len(encabezado))
+        
+        for paciente in pacientes:
+            servicios = ", ".join(paciente.servicios)
+            gradoUrgencia = self.gradoUrgencia(paciente)
+            fila = f"{paciente.nombre:^{anchoColumna}} {paciente.apellido:^{anchoColumna}} {str(paciente.edad):^{anchoColumna}} {paciente.identificacion:^{anchoColumna}} {paciente.eps:^{anchoColumna}} {paciente.estado:^{anchoColumna}} {servicios:^{anchoColumna}} {' '+gradoUrgencia:^{anchoColumna}}"
+            print(fila)
+    
     def mostrarPacientesEnEspera(self):
         print("\nPacientes en espera")
         nodoActual = self.pacientesEnEspera.primero
+        pacientes = []
         while nodoActual is not None:
             paciente = nodoActual.dato
-            servicios = ", ".join(paciente.servicios)
-            gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
+            pacientes.append(paciente)
             nodoActual = nodoActual.siguiente
-            
+        self.tabla(pacientes)
             
     def mostrarPacientesProcesoAtencion(self):
         print("\nPacientes en proceso de Atención")
-        for paciente in self.pacientesEnProceso:
-            servicios = ", ".join(paciente.servicios)
-            gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
+        self.tabla(self.pacientesEnProceso)
             
     def mostrarPacientesAtendidos(self):
         print("\nPacientes atendidos")
-        for paciente in self.pacientesAtendidos:
-            servicios = ", ".join(paciente.servicios)
-            gradoUrgencia = self.gradoUrgencia(paciente)
-            print(f"Nombre: {paciente.nombre} Apellido: {paciente.apellido} Edad: {paciente.edad} Identificación: {paciente.identificacion} EPS: {paciente.eps} Estado: {paciente.estado} Servicios: {servicios} Grado urgencia: {gradoUrgencia}")
-            if gradoUrgencia == "De alta con Tratamiento":
-                medicamento = ", ".join([medicamento.nombre for medicamento in paciente.medicamentos])
-                print(f"Medicamento asignados {medicamento}")
-            elif gradoUrgencia == "De alta por Consulta Prioritaria":
-                print(f"El paciente será remitido a la EPS {paciente.eps}")
+        self.tabla(self.pacientesAtendidos)
                 
     def menuParaMostrarPacientes(self):
         while True:
