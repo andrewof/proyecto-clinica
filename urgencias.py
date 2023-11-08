@@ -140,6 +140,29 @@ class Admisiones:
                 print("\nOpción no válida.")
         else:
             print("\nPaciente no encontrado en urgencias.")
+            
+    def cambiarServicios(self, identificacion):
+        paciente = self.buscarPaciente(identificacion)
+        
+        if paciente:
+            if paciente.estado == "Atendido":
+                print("\nEl servicio de un paciente atendido no puede ser cambiado")
+            else:
+                print("\n--Servicios disponibles--")
+                for i, servicios in enumerate(self.serviciosClinica, 1):
+                    print(f"{i}. {servicios}")
+                try:
+                    opcion = int(input("Opción: "))
+                    if 1 <= opcion <= len(self.serviciosClinica):
+                        nuevoServicio = self.serviciosClinica[opcion - 1]
+                        paciente.servicios = [nuevoServicio]
+                        print(f"\nEl servicio del paciente '{paciente.nombre} {paciente.apellido}' fue cambiado a '{nuevoServicio}'")
+                    else:
+                        print("\nOpción no válida.")
+                except ValueError:
+                    print("\nOpción no válida")
+        else:
+            print("\nPaciente no encontrado en urgencias.")
                      
             
     def asignarMedicamento(self, identificacion, codigoMedicamento):
@@ -258,7 +281,8 @@ class Admisiones:
                 3. Actualizar datos del paciente
                 4. Registrar medicamento
                 5. Asignar medicamento
-                6. Salir
+                6. Cambiar servicio del paciente
+                7. Salir
                 """)
             opcion = int(input("Digite una opción: "))
             
@@ -287,6 +311,9 @@ class Admisiones:
                 codigoMedicamento = int(input("Código medicamento: "))
                 self.asignarMedicamento(identificacion, codigoMedicamento)
             elif opcion == 6:
+                identificacion = input("Identificación: ")
+                self.cambiarServicios(identificacion)
+            elif opcion == 7:
                 break
             else:
                 print("\nOpción no válida")
