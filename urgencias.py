@@ -155,8 +155,36 @@ class Admisiones:
                     opcion = int(input("Opción: "))
                     if 1 <= opcion <= len(self.serviciosClinica):
                         nuevoServicio = self.serviciosClinica[opcion - 1]
-                        paciente.servicios = [nuevoServicio]
-                        print(f"\nEl servicio del paciente '{paciente.nombre} {paciente.apellido}' fue cambiado a '{nuevoServicio}'")
+                        if paciente in self.pacientesAtendidos:
+                            print("\nEl paciente ya ha sido atendido y no puede modificarse.")
+                        else:
+                            if paciente in self.pacientesEnEspera: # Verificammos si el paciente está "en espera"
+                                if nuevoServicio in ["Medicina interna", "Cuidado intermedio"]:
+                                    self.pacientesEnEspera.eliminar(paciente)
+                                    self.pacientesAtendidos.append(paciente)
+                                    paciente.estado = "Atendido"
+                                    paciente.servicios = [nuevoServicio]
+                                    gradoUrgencia = self.gradoUrgencia(paciente)
+                                elif nuevoServicio in ["Cirugia", "Hospitalización"]:
+                                    self.pacientesEnProceso.eliminar(paciente) 
+                                    self.pacientesAtendidos.append(paciente) # Se agrega al paciente a "atendidos"
+                                    paciente.estado = "En proceso de atención"
+                                    paciente.servicios = [nuevoServicio]
+                                    gradoUrgencia = self.gradoUrgencia(paciente)
+                                elif nuevoServicio == "Diagnóstico":
+                                    paciente.servicios = [nuevoServicio] # El paciente permance "en espera"
+                                else:
+                                    self.pacientesEnEspera.eliminar(paciente) # Se elimina de "en espera"
+                                    self.pacientesEnProceso.agregar(paciente) # Se agraga a "en proceso"
+                                    paciente.estado = "En proceso de atención"
+                                    paciente.servicios = [nuevoServicio]
+                            elif paciente in self.pacientesEnProceso:   
+                                if nuevoServicio == "Diagnóstico":
+                                    self.pacientesEnProceso.eliminar(paciente)
+                                    self.pacientesEnEspera.insertarFinal(paciente) # Se agrega al paciente "en espera"
+                                else:
+                                    paciente.servicios = [nuevoServicio] # El paciente permanece "en proceso"
+                            print(f"\nEl servicio del paciente '{paciente.nombre} {paciente.apellido}' fue cambiado a '{nuevoServicio}'")
                     else:
                         print("\nOpción no válida.")
                 except ValueError:

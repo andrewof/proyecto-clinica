@@ -12,17 +12,6 @@ class ListaDobleEnlazada:
         
     def estaVacia(self):
         return self.primero is None
-        
-    def insertarInicio(self, dato):
-        nuevoNodo = Nodo(dato)
-        
-        if self.primero is None:
-            self.primero = nuevoNodo
-            self.ultimo = nuevoNodo
-        else:
-            nuevoNodo.siguiente = self.primero
-            self.primero.anterior = nuevoNodo
-            self.primero = nuevoNodo
             
     def insertarFinal(self, dato):
         nuevoNodo = Nodo(dato)
@@ -70,6 +59,14 @@ class ListaDobleEnlazada:
             print(nodoActual.dato)
             nodoActual = nodoActual.siguiente
             
+    def __contains__(self, item):
+        actual = self.primero
+        while actual is not None:
+            if actual.dato == item:
+                return True
+            actual = actual.siguiente
+        return False
+            
 # Pila
 class Pila:
     def __init__(self):
@@ -94,9 +91,6 @@ class Pila:
     
     def __iter__(self):
         return iter(self.item)
-    
-    # def __reversed__(self):
-    #     return reversed(self.item)
     
 # Cola
 class Cola:
