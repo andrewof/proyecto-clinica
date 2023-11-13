@@ -60,16 +60,21 @@ class Admisiones:
                 servicio = self.serviciosClinica[opcion - 1]
                 nuevoPaciente.establecerServicio(servicio)
                 if servicio in ["Cirugia", "Hospitalización"]:
+                    estado = "En proceso de atención"
                     self.pacientesEnProceso.agregar(nuevoPaciente)
                 elif servicio in ["Medicina interna", "Cuidado intermedio"]:
+                    estado = "Atendido"
                     self.pacientesAtendidos.append(nuevoPaciente)
                 elif servicio == "Diagnóstico":
+                    estado = "En espera"
                     self.pacientesEnEspera.insertarFinal(nuevoPaciente)
-                print(f"\nEl servicio {servicio} fue asignado con éxito al paciente {nuevoPaciente.nombre} {nuevoPaciente.apellido}")
+                print(f"\nEl servicio '{servicio}' fue asignado con éxito al paciente '{nuevoPaciente.nombre} {nuevoPaciente.apellido}'")
             else:
                 print("\nOpción no válida.")
         except ValueError:
             print("\nOpción no válida.")
+        
+        nuevoPaciente.estado = estado
         
         self.pacientes.agregar(nuevoPaciente)
         print("\nPaciente registrado exitosamente.")
@@ -106,9 +111,6 @@ class Admisiones:
                 break
         if not encontrado:
             print("\nPaciente no encontrado en urgencias.")
-            
-    def eliminarPaciente():
-        pass
     
     def registrarMedicamento(self, codigo, nombre, existencia):
         medicamentoNuevo = {"codigo": codigo, "nombre": nombre, "existencia": existencia}
@@ -119,80 +121,48 @@ class Admisiones:
         paciente = self.buscarPaciente(identificacion)
         
         if paciente:
+            if paciente.estado == "Atendido":
+                print("\nNo se puede cambiar el servicio de un paciente ya atendido")
+                return 
+            
             print("\nServicios disponibles")
             for i, servicio in enumerate(self.serviciosClinica, 1):
                 print(f"{i}. {servicio}")
             try:
                 opcion = int(input("Opción: "))
                 if 1 <= opcion <= len(self.serviciosClinica):
-                    servicio = self.serviciosClinica[opcion - 1]
-                    paciente.establecerServicio(servicio)
-                    if servicio in ["Cirugia", "Hospitalización"]:
-                        self.pacientesEnProceso.agregar(paciente)
-                    elif servicio in ["Medicina interna", "Cuidado intermedio"]:
-                        self.pacientesAtendidos.append(paciente)
-                    elif servicio == "Diagnóstico":
-                        self.pacientesEnEspera.insertarFinal(paciente)
-                    print(f"\nEl servicio {servicio} fue asignado con éxito al paciente {paciente.nombre} {paciente.apellido}")
+                    nuevoServicio = self.serviciosClinica[opcion - 1]
+                    
+                    if nuevoServicio not in paciente.servicios:
+                        if paciente.estado == "En espera":
+                            self.pacientesEnEspera.eliminar(paciente)
+                        elif paciente.estado == "En proceso de atención":
+                            self.pacientesEnProceso.eliminar(paciente)
+                        elif paciente.estado == "Atendido":
+                            self.pacientesAtendidos.remove(paciente)
+                            
+                        paciente.establecerServicio(nuevoServicio)
+                        if nuevoServicio in ["Cirugia", "Hospitalización"]:
+                            paciente.estado = "En proceso de atención"
+                            self.pacientesEnProceso.agregar(paciente)
+                        elif nuevoServicio in ["Medicina interna", "Cuidado intermedio"]:
+                            paciente.estado = "Atendido"
+                            self.pacientesAtendidos.append(paciente)
+                        elif nuevoServicio == "Diagnóstico":
+                            paciente.estado = "En espera"
+                            self.pacientesEnEspera.insertarFinal(paciente)
+                        
+                        print(f"\nEl servicio '{nuevoServicio}' fue asignado con éxito al paciente '{paciente.nombre} {paciente.apellido}'")
+                    else:
+                        print("\nEl paciente ya tiene asignado ese servicio.")
                 else:
                     print("\nOpción no válida.")
             except ValueError:
                 print("\nOpción no válida.")
         else:
             print("\nPaciente no encontrado en urgencias.")
-            
-    def cambiarServicios(self, identificacion):
-        paciente = self.buscarPaciente(identificacion)
-        
-        if paciente:
-            if paciente.estado == "Atendido":
-                print("\nEl servicio de un paciente atendido no puede ser cambiado")
-            else:
-                print("\n--Servicios disponibles--")
-                for i, servicios in enumerate(self.serviciosClinica, 1):
-                    print(f"{i}. {servicios}")
-                try:
-                    opcion = int(input("Opción: "))
-                    if 1 <= opcion <= len(self.serviciosClinica):
-                        nuevoServicio = self.serviciosClinica[opcion - 1]
-                        if paciente in self.pacientesAtendidos:
-                            print("\nEl paciente ya ha sido atendido y no puede modificarse.")
-                        else:
-                            if paciente in self.pacientesEnEspera: # Verificammos si el paciente está "en espera"
-                                if nuevoServicio in ["Medicina interna", "Cuidado intermedio"]:
-                                    self.pacientesEnEspera.eliminar(paciente)
-                                    self.pacientesAtendidos.append(paciente)
-                                    paciente.estado = "Atendido"
-                                    paciente.servicios = [nuevoServicio]
-                                    gradoUrgencia = self.gradoUrgencia(paciente)
-                                elif nuevoServicio in ["Cirugia", "Hospitalización"]:
-                                    self.pacientesEnProceso.eliminar(paciente) 
-                                    self.pacientesAtendidos.append(paciente) # Se agrega al paciente a "atendidos"
-                                    paciente.estado = "En proceso de atención"
-                                    paciente.servicios = [nuevoServicio]
-                                    gradoUrgencia = self.gradoUrgencia(paciente)
-                                elif nuevoServicio == "Diagnóstico":
-                                    paciente.servicios = [nuevoServicio] # El paciente permance "en espera"
-                                else:
-                                    self.pacientesEnEspera.eliminar(paciente) # Se elimina de "en espera"
-                                    self.pacientesEnProceso.agregar(paciente) # Se agraga a "en proceso"
-                                    paciente.estado = "En proceso de atención"
-                                    paciente.servicios = [nuevoServicio]
-                            elif paciente in self.pacientesEnProceso:   
-                                if nuevoServicio == "Diagnóstico":
-                                    self.pacientesEnProceso.eliminar(paciente)
-                                    self.pacientesEnEspera.insertarFinal(paciente) # Se agrega al paciente "en espera"
-                                else:
-                                    paciente.servicios = [nuevoServicio] # El paciente permanece "en proceso"
-                            print(f"\nEl servicio del paciente '{paciente.nombre} {paciente.apellido}' fue cambiado a '{nuevoServicio}'")
-                    else:
-                        print("\nOpción no válida.")
-                except ValueError:
-                    print("\nOpción no válida")
-        else:
-            print("\nPaciente no encontrado en urgencias.")
+                      
                      
-            
     def asignarMedicamento(self, identificacion, codigoMedicamento):
         paciente = self.buscarPaciente(identificacion)
         
@@ -228,21 +198,7 @@ class Admisiones:
                 return paciente
         return None
     
-    def gradoUrgencia(self, paciente):
-        servicioPaciente = paciente.servicios
-        
-        if "Cirugia" in servicioPaciente and "Hospitalización" in servicioPaciente:
-            return "Admitido a urgencias"
-        elif "Cuidado intermedio" in servicioPaciente:
-            return "De alta con Tratamiento"
-        elif "Medicina interna" in servicioPaciente:
-            return "De alta por Consulta Prioritaria"
-        elif "Diagnóstico" in servicioPaciente:
-            return "Esperando diagnostico"
-        else:
-            return "No se puede determinar el grado de la urgencia"
-    
-        # Método para mostrar los datos de los pacientes en tablas
+    # Método para mostrar los datos de los pacientes en tablas
     def tabla(self, pacientes):
         if not pacientes:
             print("\nNo hay pacientes actualmente")
@@ -250,14 +206,13 @@ class Admisiones:
         
         anchoColumna = 16
         
-        encabezado = f"{'Nombre':^{anchoColumna}} {'Apellido':^{anchoColumna}} {'Edad':^{anchoColumna}} {'Identificación':^{anchoColumna}} {'EPS':^{anchoColumna}} {'Estado':^{anchoColumna}} {'Servicios':^{anchoColumna}} {'Grado urgencia':^{anchoColumna}}"
+        encabezado = f"{'Nombre':^{anchoColumna}} {'Apellido':^{anchoColumna}} {'Edad':^{anchoColumna}} {'Identificación':^{anchoColumna}} {'EPS':^{anchoColumna}} {'Estado':^{anchoColumna}} {'Servicios':^{anchoColumna}}"
         print(encabezado)
         print("-"*len(encabezado))
         
         for paciente in pacientes:
             servicios = ", ".join(paciente.servicios)
-            gradoUrgencia = self.gradoUrgencia(paciente)
-            fila = f"{paciente.nombre:^{anchoColumna}} {paciente.apellido:^{anchoColumna}} {str(paciente.edad):^{anchoColumna}} {paciente.identificacion:^{anchoColumna}} {paciente.eps:^{anchoColumna}} {paciente.estado:^{anchoColumna}} {servicios:^{anchoColumna}} {' '+gradoUrgencia:^{anchoColumna}}"
+            fila = f"{paciente.nombre:^{anchoColumna}} {paciente.apellido:^{anchoColumna}} {str(paciente.edad):^{anchoColumna}} {paciente.identificacion:^{anchoColumna}} {paciente.eps:^{anchoColumna}} {paciente.estado:^{anchoColumna}} {servicios:^{anchoColumna}}"
             print(fila)
     
     def mostrarPacientesEnEspera(self):
@@ -309,7 +264,7 @@ class Admisiones:
                 3. Actualizar datos del paciente
                 4. Registrar medicamento
                 5. Asignar medicamento
-                6. Cambiar servicio del paciente
+                6. Cambiar servicios
                 7. Salir
                 """)
             opcion = int(input("Digite una opción: "))
@@ -339,8 +294,9 @@ class Admisiones:
                 codigoMedicamento = int(input("Código medicamento: "))
                 self.asignarMedicamento(identificacion, codigoMedicamento)
             elif opcion == 6:
-                identificacion = input("Identificación: ")
-                self.cambiarServicios(identificacion)
+                print("Digite la identificación para cambiar los servicios del paciente")
+                indentificacion = input("Identificación: ")
+                self.asignarServicio(identificacion)
             elif opcion == 7:
                 break
             else:
