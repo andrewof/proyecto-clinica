@@ -22,12 +22,15 @@ class Paciente:
         self.estado = estado
         self.servicios = [] # Servicios asignados al paciente
         self.medicamentos = [] # Medicamento asignado al paciente
+        self.medicamentosRecetados = []
         
     def establecerServicio(self, servicio):
         self.servicios.append(servicio)
         
-    def establecerMedicamento(self, medicamentos):
-        self.medicamentos.append(medicamentos)
+    def establecerMedicamento(self, medicamento):
+        self.medicamentos.append(medicamento)
+        if "Cuidado intermedio" in self.servicios:
+            self.medicamentosRecetados.append(medicamento)
     
 class Admisiones:
     def __init__(self):
@@ -65,6 +68,9 @@ class Admisiones:
                 elif servicio in ["Medicina interna", "Cuidado intermedio"]:
                     estado = "Atendido"
                     self.pacientesAtendidos.append(nuevoPaciente)
+                    
+                    if servicio == "Cuidado intermedio":
+                        self.asignarMedicamentoCuidadoIntermedio(nuevoPaciente)
                 elif servicio == "Diagnóstico":
                     estado = "En espera"
                     self.pacientesEnEspera.insertarFinal(nuevoPaciente)
@@ -161,6 +167,21 @@ class Admisiones:
                 print("\nOpción no válida.")
         else:
             print("\nPaciente no encontrado en urgencias.")
+            
+    def asignarMedicamentoCuidadoIntermedio(self, paciente):
+        if "Cuidado intermedio" in paciente.servicios:
+            codigoMedicamento = input("\nCódigo medicamento: ")
+            medicamento = self.buscarMedicamento(codigoMedicamento)
+            if not medicamento:
+                # Si el medicamento no existe
+                print("\nEl medicamento no existe. Por favor registrarlo.")
+                nombreMedicamento = input("Nombre medicamento: ")
+                existenciaMedicamento = int(input("Existencia medicamento: "))
+                medicamento = {"codigo": codigoMedicamento, "nombre": nombreMedicamento, "existencia": existenciaMedicamento}
+            nuevoMedicamento = Medicamento(medicamento['codigo'], medicamento['nombre'], 1)
+            paciente.establecerMedicamento(nuevoMedicamento)
+            print(f"\nMedicamento '{nuevoMedicamento.nombre}' asignado con éxito al paciente '{paciente.nombre} {paciente.apellido}'")
+            medicamento['existencia'] -= 1
                       
                      
     def asignarMedicamento(self, identificacion, codigoMedicamento):
@@ -238,7 +259,22 @@ class Admisiones:
             
     def mostrarPacientesAtendidos(self):
         print("\nPacientes atendidos")
-        self.tabla(self.pacientesAtendidos)
+        for paciente in self.pacientesAtendidos:
+            self.mostrarDatosPacienteMedicinaInterna(paciente)
+        
+    def mostrarDatosPacienteMedicinaInterna(self, paciente):
+        encabezado = f"{'Nombre':^16} {'Apellido':^16} {'Edad':^16} {'Identificación':^16} {'EPS':^16} {'Estado':^16} {'Servicios':^16} {'Medicamentos Recetados':^25}"
+        print(encabezado)
+        print("-"*len(encabezado))
+        
+        servicios = ", ".join(paciente.servicios)
+        medicamentoRecetado = ", ".join([medicamento.nombre for medicamento in paciente.medicamentosRecetados])
+        fila = f"{paciente.nombre:^16} {paciente.apellido:^16} {str(paciente.edad):^16} {paciente.identificacion:^16} {paciente.eps:^16} {paciente.estado:^16} {servicios:^16} {medicamentoRecetado:^25}"
+        print(fila)
+        
+        if "Medicina interna" in paciente.servicios:
+            print(f"\nEl paciente '{paciente.nombre} {paciente.apellido}' fue remitido a consulta prioritaria a la EPS '{paciente.eps}'\n")
+        
                 
     def menuParaMostrarPacientes(self):
         while True:
@@ -292,10 +328,10 @@ class Admisiones:
                 identificacion = input("Identificación: ")
                 self.actualizarPaciente(identificacion)
             elif opcion == 4:
-                codigo = input("Código: ")
-                nombre = input("Nombre: ")
-                existencia = int(input("Existencias: "))
-                self.registrarMedicamento(codigo, nombre, existencia)
+                codigoMedicamento = input("Código: ")
+                nombreMedicamento = input("Nombre: ")
+                existenciaMedicamento = int(input("Existencias: "))
+                self.registrarMedicamento(codigoMedicamento, nombreMedicamento, existenciaMedicamento)
             elif opcion == 5:
                 identificacion = input("Identificación: ")
                 codigoMedicamento = int(input("Código medicamento: "))
