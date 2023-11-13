@@ -206,6 +206,13 @@ class Admisiones:
         
         anchoColumna = 16
         
+        if not pacientes or (hasattr(pacientes, 'vacia') and pacientes.vacia()):
+            print("\nNo hay pacientes actualmente.")
+            return
+        
+        if hasattr(pacientes, 'item') and not pacientes.vacia():
+            pacientes = list(pacientes)
+        
         encabezado = f"{'Nombre':^{anchoColumna}} {'Apellido':^{anchoColumna}} {'Edad':^{anchoColumna}} {'Identificación':^{anchoColumna}} {'EPS':^{anchoColumna}} {'Estado':^{anchoColumna}} {'Servicios':^{anchoColumna}}"
         print(encabezado)
         print("-"*len(encabezado))
