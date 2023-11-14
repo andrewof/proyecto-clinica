@@ -1,6 +1,6 @@
-from urgencias import Admisiones
+from urgencias import  Urgencia
 
 # Inicia el programa        
 if __name__ == "__main__":
-    admisiones = Admisiones()
+    admisiones = Urgencia()
     admisiones.menu()

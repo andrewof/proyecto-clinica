@@ -33,7 +33,7 @@ class Paciente:
         if "Cuidado intermedio" in self.servicios:
             self.medicamentosRecetados.append(medicamento)
     
-class Admisiones:
+class Urgencia:
     def __init__(self):
         self.pacientes = Cola() # Cola para guardar los pacientes para guardar por orden de llegada
         self.pacientesAtendidos = [] # Lista simple
@@ -101,7 +101,12 @@ class Admisiones:
                 print("Si no desea actualizar un campo, dejar en blanco")
                 nuevoNombre = input("Nuevo nombre: ")
                 nuevoApellido = input("Nuevo Apellido: ")
-                nuevaEdad = input("Nueva edad: ")
+                while True:
+                    try:
+                        nuevaEdad = int(input("Nueva edad: "))
+                        break
+                    except ValueError:
+                        print("\nLa edad no puede ser una cadena.")
                 nuevaEps = input("Nueva eps: ")
                 
                 if nuevoNombre != "":
@@ -292,16 +297,23 @@ class Admisiones:
                   1. Pacientes en espera
                   2. Pacientes en proceso de atención
                   3. Pacientes atendidos
-                  4. Salir
+                  4. Menú principal
                   """)
-            opcion = int(input("Opción: "))
+            try: 
+                opcion = int(input("Opción: "))
+            except ValueError:
+                print("\nLa opción tiene que ser un número.")
+                continue
 
             if opcion == 1:
                 self.mostrarPacientesEnEspera()
+                break
             elif opcion == 2:
                 self.mostrarPacientesProcesoAtencion()
+                break
             elif opcion == 3:
                 self.mostrarPacientesAtendidos()
+                break
             elif opcion == 4:
                 break
             else:
@@ -319,14 +331,23 @@ class Admisiones:
                 6. Cambiar servicios
                 7. Salir
                 """)
-            opcion = int(input("Digite una opción: "))
+            try:
+                opcion = int(input("Digite una opción: "))
+            except ValueError:
+                print("\nLa opción tiene que ser un número.")
+                continue
             
             print()
             if opcion == 1:
                 print("DATOS DEL PACIENTE")
                 nombre = input("Nombre: ")
                 apellido = input("Apellido: ")
-                edad = int(input("Edad: "))
+                while True:
+                    try:
+                        edad = int(input("Edad: "))
+                        break
+                    except ValueError:
+                        print("\nLa edad no puede ser una cadena")
                 identificacion = input("Identificación: ")
                 eps = input("EPS: ")
                 self.registrarPaciente(nombre, apellido, edad, identificacion, eps)
