@@ -185,7 +185,12 @@ class Urgencia:
                 # Si el medicamento no existe
                 print("\nEl medicamento no existe. Por favor registrarlo.")
                 nombreMedicamento = input("Nombre medicamento: ")
-                existenciaMedicamento = int(input("Existencia medicamento: "))
+                while True:
+                    try:
+                        existenciaMedicamento = int(input("Existencia medicamento: "))
+                        break
+                    except ValueError:
+                        print("\nLas existencias deben ser en números.")
                 medicamento = {"codigo": codigoMedicamento, "nombre": nombreMedicamento, "existencia": existenciaMedicamento}
             nuevoMedicamento = Medicamento(medicamento['codigo'], medicamento['nombre'], medicamento['existencia'])
             paciente.establecerMedicamento(nuevoMedicamento)
@@ -335,11 +340,16 @@ class Urgencia:
             elif opcion == 4:
                 codigoMedicamento = input("Código: ")
                 nombreMedicamento = input("Nombre: ")
-                existenciaMedicamento = int(input("Existencias: "))
+                while True:
+                    try:
+                        existenciaMedicamento = int(input("Existencias: "))
+                        break
+                    except ValueError:
+                        print("\nLas exitencias deben ingresarse en números.")
                 self.registrarMedicamento(codigoMedicamento, nombreMedicamento, existenciaMedicamento)
             elif opcion == 5:
                 print("Digite la identificación para cambiar los servicios del paciente")
-                indentificacion = input("Identificación: ")
+                identificacion = input("Identificación: ")
                 self.asignarServicio(identificacion)
             elif opcion == 6:
                 break
