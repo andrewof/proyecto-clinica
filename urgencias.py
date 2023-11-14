@@ -191,30 +191,6 @@ class Urgencia:
             paciente.establecerMedicamento(nuevoMedicamento)
             print(f"\nMedicamento '{nuevoMedicamento.nombre}' asignado con éxito al paciente '{paciente.nombre} {paciente.apellido}'")
             medicamento['existencia'] -= 1
-                      
-                     
-    def asignarMedicamento(self, identificacion, codigoMedicamento):
-        paciente = self.buscarPaciente(identificacion)
-        
-        if paciente:
-            gradoUrgencia = self.gradoUrgencia(paciente)
-            if gradoUrgencia == "De alta con Tratamiento":
-                codigoMedicamento = str(codigoMedicamento)
-                medicamento = self.buscarMedicamento(codigoMedicamento)
-                if medicamento:
-                    nuevoMedicamneto = Medicamento(codigoMedicamento, medicamento['nombre'], 1)
-                    paciente.establecerMedicamento(nuevoMedicamneto)
-                    print(f"\nMedicamento {nuevoMedicamneto.nombre} asignado con éxito al paciente {paciente.nombre} {paciente.apellido}")
-                    medicamento['existencia'] -= 1
-                else:
-                    print("\nMedicamento no encontrado.")
-            elif gradoUrgencia == "De alta por Consulta Prioritaria":
-                print(f"\nEl paciente será remitido a la EPS {paciente.eps}")
-            else:
-                print("\nNo se puede asignar el medicamento al paciente.")
-        else:
-            print("\nPaciente no encontrado en urgencias.")
-                
         
     def buscarMedicamento(self, codigo):
         for medicamento in self.medicamentosDisponibles:
@@ -327,9 +303,8 @@ class Urgencia:
                 2. Mostrar pacientes en espera/proceso/atendidos
                 3. Actualizar datos del paciente
                 4. Registrar medicamento
-                5. Asignar medicamento
-                6. Cambiar servicios
-                7. Salir
+                5. Cambiar servicios
+                6. Salir
                 """)
             try:
                 opcion = int(input("Digite una opción: "))
@@ -363,15 +338,10 @@ class Urgencia:
                 existenciaMedicamento = int(input("Existencias: "))
                 self.registrarMedicamento(codigoMedicamento, nombreMedicamento, existenciaMedicamento)
             elif opcion == 5:
-                identificacion = input("Identificación: ")
-                codigoMedicamento = int(input("Código medicamento: "))
-                self.asignarMedicamento(identificacion, codigoMedicamento)
-            elif opcion == 6:
                 print("Digite la identificación para cambiar los servicios del paciente")
                 indentificacion = input("Identificación: ")
                 self.asignarServicio(identificacion)
-            elif opcion == 7:
+            elif opcion == 6:
                 break
             else:
                 print("\nOpción no válida")
-    
