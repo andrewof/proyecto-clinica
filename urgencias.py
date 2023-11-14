@@ -154,6 +154,8 @@ class Admisiones:
                         elif nuevoServicio in ["Medicina interna", "Cuidado intermedio"]:
                             paciente.estado = "Atendido"
                             self.pacientesAtendidos.append(paciente)
+                            if nuevoServicio == "Cuidado intermedio":
+                                self.asignarMedicamentoCuidadoIntermedio(paciente)
                         elif nuevoServicio == "Diagnóstico":
                             paciente.estado = "En espera"
                             self.pacientesEnEspera.insertarFinal(paciente)
@@ -178,7 +180,7 @@ class Admisiones:
                 nombreMedicamento = input("Nombre medicamento: ")
                 existenciaMedicamento = int(input("Existencia medicamento: "))
                 medicamento = {"codigo": codigoMedicamento, "nombre": nombreMedicamento, "existencia": existenciaMedicamento}
-            nuevoMedicamento = Medicamento(medicamento['codigo'], medicamento['nombre'], 1)
+            nuevoMedicamento = Medicamento(medicamento['codigo'], medicamento['nombre'], medicamento['existencia'])
             paciente.establecerMedicamento(nuevoMedicamento)
             print(f"\nMedicamento '{nuevoMedicamento.nombre}' asignado con éxito al paciente '{paciente.nombre} {paciente.apellido}'")
             medicamento['existencia'] -= 1
@@ -259,6 +261,11 @@ class Admisiones:
             
     def mostrarPacientesAtendidos(self):
         print("\nPacientes atendidos")
+        
+        if not self.pacientesAtendidos:
+            print("\nNo hay pacientes atendidos actualmente.")
+            return
+        
         for paciente in self.pacientesAtendidos:
             self.mostrarDatosPacienteMedicinaInterna(paciente)
         
