@@ -258,13 +258,19 @@ class Urgencia:
             self.mostrarDatosPacienteMedicinaInterna(paciente)
         
     def mostrarDatosPacienteMedicinaInterna(self, paciente):
-        encabezado = f"{'Nombre':^16} {'Apellido':^16} {'Edad':^16} {'Identificación':^16} {'EPS':^16} {'Estado':^16} {'Servicios':^16} {'Medicamentos Recetados':^25}"
-        print(encabezado)
-        print("-"*len(encabezado))
+        encabezado = f"{'Nombre':^16} {'Apellido':^16} {'Edad':^16} {'Identificación':^16} {'EPS':^16} {'Estado':^16} {'Servicios':^16}"
         
         servicios = ", ".join(paciente.servicios)
         medicamentoRecetado = ", ".join([medicamento.nombre for medicamento in paciente.medicamentosRecetados])
-        fila = f"{paciente.nombre:^16} {paciente.apellido:^16} {str(paciente.edad):^16} {paciente.identificacion:^16} {paciente.eps:^16} {paciente.estado:^16} {servicios:^16} {medicamentoRecetado:^25}"
+        fila = f"{paciente.nombre:^16} {paciente.apellido:^16} {str(paciente.edad):^16} {paciente.identificacion:^16} {paciente.eps:^16} {paciente.estado:^16} {servicios:^16}"
+        
+        if "Cuidado intermedio" in paciente.servicios:
+            medicamentoRecetado = ", ".join([medicamento.nombre for medicamento in paciente.medicamentosRecetados])
+            encabezado += f" {'Medicamentos Recetados':^25}"
+            fila += f" {medicamentoRecetado:^25}"
+        
+        print(encabezado)
+        print("-"*len(encabezado))
         print(fila)
         
         if "Medicina interna" in paciente.servicios:
