@@ -25,7 +25,8 @@ class Paciente:
         self.medicamentosRecetados = []
         
     def establecerServicio(self, servicio):
-        self.servicios.append(servicio)
+        if servicio not in self.servicios:
+            self.servicios.append(servicio)
         
     def establecerMedicamento(self, medicamento):
         self.medicamentos.append(medicamento)
@@ -140,6 +141,7 @@ class Admisiones:
                     nuevoServicio = self.serviciosClinica[opcion - 1]
                     
                     if nuevoServicio not in paciente.servicios:
+                        paciente.servicios = []
                         if paciente.estado == "En espera":
                             self.pacientesEnEspera.eliminar(paciente)
                         elif paciente.estado == "En proceso de atención":
@@ -263,7 +265,7 @@ class Admisiones:
         print("\nPacientes atendidos")
         
         if not self.pacientesAtendidos:
-            print("\nNo hay pacientes atendidos actualmente.")
+            print("\nNo hay pacientes actualmente.")
             return
         
         for paciente in self.pacientesAtendidos:
