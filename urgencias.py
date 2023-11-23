@@ -102,8 +102,13 @@ class Urgencia:
                 nuevoNombre = input("Nuevo nombre: ")
                 nuevoApellido = input("Nuevo Apellido: ")
                 while True:
+                    nuevaEdadInput = input("Nueva edad: ")
+                    
+                    if nuevaEdadInput == "":
+                        break
+                    
                     try:
-                        nuevaEdad = int(input("Nueva edad: "))
+                        nuevaEdad = int(nuevaEdadInput)
                         break
                     except ValueError:
                         print("\nLa edad no puede ser una cadena.")
@@ -113,7 +118,7 @@ class Urgencia:
                     paciente.nombre = nuevoNombre
                 if nuevoApellido != "":
                     paciente.apellido = nuevoApellido
-                if nuevaEdad != "":
+                if nuevaEdad is not None:
                     paciente.edad = nuevaEdad
                 if nuevaEps != "":
                     paciente.eps = nuevaEps
